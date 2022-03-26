@@ -19,18 +19,9 @@ void setup() {
   LINE.setToken(LINE_TOKEN);
 }
 void loop() {
-  while (NodeSerial.available() > 0)
+  if (NodeSerial.read() == '\n')
   {
-    int i_data = NodeSerial.parseInt();
-    float f_data = NodeSerial.parseFloat();
-    if (NodeSerial.read() == '\n')
-    {
-      Serial.print("NodeMCU or ESP8266");
-      Serial.print(" : ");
-      Serial.print(i_data); Serial.print(" : ");
-      Serial.println(f_data);
-      LINE.notify("*** ALARM ***");
-      delay(2000);
-    }
+    LINE.notify("*** ALARM ***");
+    delay(2000);
   }
 }

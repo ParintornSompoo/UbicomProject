@@ -1,5 +1,3 @@
-int i_data = 134;
-float f_data = 345.52;
 int pirPin = 4;
 int pirStat = 0;
 int x[] = {0,0};
@@ -17,15 +15,9 @@ void setup()
 }
 void loop() {
   pirStat = digitalRead(pirPin);
-  Serial.print(i_data);
-  Serial.print("\t");
-  Serial.println(f_data);
   x[0] = x[1];
   x[1] = pirStat;
   if ((x[0] == 0) && (x[1] == 1)) {
-  UnoSerial.print(i_data);
-  UnoSerial.print(" ");
-  UnoSerial.print(f_data);
   UnoSerial.print("\n");
   tone(buzzer,1000);
   }
