@@ -10,6 +10,8 @@ int x[] = {0,0};
 int screenOffMsg =0;
 String password="1234";
 String tempPassword;
+String testPassword;
+char c;
 boolean activated = false;
 boolean isActivated;
 boolean activateAlarm = false;
@@ -33,9 +35,11 @@ void setup() {
   lcd.init();
   lcd.backlight();
   pinMode(buzzer, OUTPUT);
+  Serial.begin(9600);
   Ar.begin(57600);
 }
 void loop() {
+  getpassword();
   pirStat = digitalRead(pirPin);
   x[0] = x[1];
   x[1] = pirStat;
@@ -163,6 +167,35 @@ void loop() {
    }
  }
 }
+void getpassword() {
+  while (Ar.available()>0) {
+    c = Ar.read();
+    if(c=='\n') {break;}
+    else {testPassword+=c;}
+  }
+  if(c=='\n')
+  {
+    passwordfromphone();
+    c =0;
+    testPassword="";
+  }
+}
+void passwordfromphone() {
+  Serial.println(testPassword);
+  Serial.println(password);
+  Serial.println(activated);
+  if (activated){
+    if ( testPassword == password ) {
+          activated = false;
+          alarmActivated = false;
+          noTone(buzzer);
+          screenOffMsg = 0;
+    }
+  }
+  else{
+  password = testPassword;
+  }
+}
 void enterPassword() {
   int k=5;
   tempPassword = "";
@@ -172,11 +205,8 @@ void enterPassword() {
   lcd.print(" *** ALARM *** ");
   lcd.setCursor(0,1);
   lcd.print("Pass>");
-  if (activated = true){
-    Ar.print(k);
-    Ar.print(" ");
-  }
       while(activated) {
+      getpassword();
       keypressed = myKeypad.getKey();
       if (keypressed != NO_KEY){
         if (keypressed == '0' || keypressed == '1' || keypressed == '2' || keypressed == '3' ||
@@ -203,9 +233,6 @@ void enterPassword() {
           alarmActivated = false;
           noTone(buzzer);
           screenOffMsg = 0;
-          k = 10;
-          Ar.print(k);
-          Ar.print(" ");
         }
         else if (tempPassword != password) {
           lcd.setCursor(0,1);
